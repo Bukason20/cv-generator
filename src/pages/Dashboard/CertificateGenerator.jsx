@@ -26,6 +26,7 @@ const CertificateGenerator = () => {
 
   
   const [bulkNames, setBulkNames] = useState([])
+  const [bulkFirstName, setBulkFirstName] = useState(bulkNames ? bulkNames[0] : "")
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -61,15 +62,14 @@ const CertificateGenerator = () => {
 
     const originalX = Math.round(displayX * scaleX)
     const originalY = Math.round(displayY * scaleY)
-
-
+    
     setCoords({
       displayX,
       displayY,
       originalX,
       originalY,
     })
-
+    setBulkFirstName(bulkNames?.[0])
     // console.log(scaleX, img.naturalWidth, rect.width, displayX)
   }
 
@@ -147,67 +147,54 @@ const CertificateGenerator = () => {
 
       {/* Recipient Info Tabs */}
       {/* Recipient Info Tabs */}
-<section className="mb-10">
-  <h2 className="text-xl font-semibold mb-2">Recipient Information</h2>
-  <div className="flex gap-4 border-b border-gray-200 mb-4">
-    <button
-      onClick={() => setActiveTab('bulk')}
-      className={`pb-2 ${activeTab === 'bulk' ? 'border-b-2 border-black font-medium' : 'text-gray-500'}`}
-    >
-      Bulk Upload
-    </button>
-    <button
-      onClick={() => setActiveTab('single')}
-      className={`pb-2 ${activeTab === 'single' ? 'border-b-2 border-black font-medium' : 'text-gray-500'}`}
-    >
-      Single Entry
-    </button>
-  </div>
-
-  {activeTab === 'bulk' && (
-    <div className="border border-dashed border-gray-300 p-6 text-center rounded-lg">
-      <p className="mb-3 text-gray-500">Drag and drop a file here, or</p>
-      <label className="inline-block px-4 py-2 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
-        Upload File
-        <input type="file" className="hidden" onChange={handleFileChange} />
-      </label>
-    </div>
-  )}
-
-  {activeTab === 'single' && (
-    <>
-      <div className="mt-4">
-        <label className="block mb-2 text-sm font-medium text-gray-700">Enter Name</label>
-        <input
-          type="text"
-          placeholder="Enter a name"
-          className="border rounded w-full p-2"
-          value={singleName}
-          onChange={(e) => setSingleName(e.target.value)}
-        />
+    <section className="mb-10">
+      <h2 className="text-xl font-semibold mb-2">Recipient Information</h2>
+      <div className="flex gap-4 border-b border-gray-200 mb-4">
+        <button
+          onClick={() => setActiveTab('bulk')}
+          className={`pb-2 ${activeTab === 'bulk' ? 'border-b-2 border-black font-medium' : 'text-gray-500'}`}
+        >
+          Bulk Upload
+        </button>
+        <button
+          onClick={() => setActiveTab('single')}
+          className={`pb-2 ${activeTab === 'single' ? 'border-b-2 border-black font-medium' : 'text-gray-500'}`}
+        >
+          Single Entry
+        </button>
       </div>
 
-      {singleName && coords.displayX !== null && coords.displayY !== null && (
-        <div
-          className="absolute whitespace-nowrap text-lg font-semibold text-black select-none"
-          style={{
-            left: `${coords.displayX}px`,
-            top: `${coords.displayY}px`,
-            position: 'absolute',
-          }}
-        >
-          {singleName}
+      {activeTab === 'bulk' && (
+        <div className="border border-dashed border-gray-300 p-6 text-center rounded-lg">
+          <p className="mb-3 text-gray-500">Drag and drop a file here, or</p>
+          <label className="inline-block px-4 py-2 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+            Upload File
+            <input type="file" className="hidden" onChange={handleFileChange} />
+          </label>
         </div>
       )}
-    </>
-  )}
-</section>
+
+      {activeTab === 'single' && (
+        <>
+          <div className="mt-4">
+            <label className="block mb-2 text-sm font-medium text-gray-700">Enter Name</label>
+            <input
+              type="text"
+              placeholder="Enter a name"
+              className="border rounded w-full p-2"
+              value={singleName}
+              onChange={(e) => setSingleName(e.target.value)}
+            />
+          </div>
+        </>
+      )}
+    </section>
 
 
       {/* Preview Section */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold mb-2">Preview Certificate</h2>
-        {fileName && (
+        {(fileName && activeTab=="bulk")  && (
           <p className="text-gray-600 text-sm mb-4">File name: {fileName}</p>
         )}
 
@@ -222,6 +209,22 @@ const CertificateGenerator = () => {
                 className="w-full h-auto block rounded border cursor-crosshair"
                 onClick={handleImageClick}
               />
+
+              {activeTab === 'bulk' &&
+                bulkNames &&
+                coords.displayX !== null &&
+                coords.displayY !== null && (
+                  <div
+                    className="absolute whitespace-nowrap text-lg font-semibold text-black select-none"
+                    style={{
+                      left: `${coords.displayX}px`,
+                      top: `${coords.displayY}px`,
+                      transform: "translateY(-50%)"
+                    }}
+                  >
+                    {bulkFirstName}
+                  </div>
+                )}
 
               {activeTab === 'single' &&
                 singleName &&
@@ -238,6 +241,7 @@ const CertificateGenerator = () => {
                     {singleName}
                   </div>
                 )}
+
             </div>
           </div>
 
@@ -250,7 +254,7 @@ const CertificateGenerator = () => {
                 : 'Bulk names will render in your final export.'}
             </p>
 
-            {activeTab === 'single' && coords.displayX !== null && (
+            {(activeTab === 'single' || activeTab === "bulk") && coords.displayX !== null && (
               <div className="mt-2">
                 <p><strong>Display X:</strong> {Math.round(coords.displayX)}px</p>
                 <p><strong>Display Y:</strong> {Math.round(coords.displayY)}px</p>
@@ -296,22 +300,25 @@ const CertificateGenerator = () => {
       </section>
 
       {/* Recipient Names Preview (Bulk) */}
-      <section className="mb-10">
-        <table className="w-full border border-gray-300 text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 border-b">Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(activeTab === 'bulk' ? bulkNames : names).map((name, idx) => (
-              <tr key={idx} className="border-t">
-                <td className="px-4 py-2">{name}</td>
+      {activeTab === "bulk" ? (
+        <section className="mb-10">
+          <table className="w-full border border-gray-300 text-left">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 border-b">Name</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            </thead>
+            <tbody>
+              {(activeTab === 'bulk' ? bulkNames : names).map((name, idx) => (
+                <tr key={idx} className="border-t">
+                  <td className="px-4 py-2">{name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>  
+      ): ""}
+      
 
       {/* Action Button */}
       <div className="text-right">
