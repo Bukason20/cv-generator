@@ -2,8 +2,10 @@ import React, { useState, useRef } from 'react'
 import { certificate } from '../../assets'
 import { authApi } from '../../api/axios'
 import * as XLSX from 'xlsx' // Add at the top
+import { useNavigate } from 'react-router-dom'
 
 const CertificateGenerator = () => {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('bulk')
   const [fileName, setFileName] = useState('')
@@ -43,7 +45,7 @@ const CertificateGenerator = () => {
     const json = XLSX.utils.sheet_to_json(worksheet)
 
     // Assume name is in a column titled "Name" or "name"
-    const extractedNames = json.map((row) => row.Name || row.name).filter(Boolean)
+    const extractedNames = json.map((row) => row.Names || row.names).filter(Boolean)
     setBulkNames(extractedNames)
     
   }
@@ -109,6 +111,9 @@ const CertificateGenerator = () => {
 
       const response = await authApi.post('/api/cert/generate', certificateData)
       console.log(response.data)
+      if(response.status === 201) {
+        navigate("/dashboard/certificates")
+      }
     } else {
       const multipleCertificateData = {
         names: bulkNames,
@@ -116,7 +121,9 @@ const CertificateGenerator = () => {
         y: coords.originalY,
       }
       const response = await authApi.post("/api/cert/generate-batch", multipleCertificateData)
-      console.log(response.data)
+      if(response.status === 201) {
+        navigate("/dashboard/certificates")
+      }
     }
   } catch (err) {
     console.error(err)
@@ -251,7 +258,12 @@ const CertificateGenerator = () => {
             <p>
               {activeTab === 'single'
                 ? 'Click on the certificate to place the name.'
-                : 'Bulk names will render in your final export.'}
+                : <>
+                  <p>Bulk names will render in your final export.</p>
+                  <p className='text-red-600 font-bold mt-1'><b>NOTE:</b> Only excel files are allowed <br/> 
+                    Make sure that the names you want to create on the excel file is on a column in your Excel file with a title called "Names" or "names"
+                  </p>
+                </>}
             </p>
 
             {(activeTab === 'single' || activeTab === "bulk") && coords.displayX !== null && (

@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import CertificateGenerator from './pages/Dashboard/CertificateGenerator'
+import GetCertificates from './pages/Dashboard/GetCertificates'
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
         <Route path='/' element={<Home />}></Route>
         <Route path='/signup' element={<Signup />}></Route>
         <Route path='/login' element={<Login />}></Route>
-        <Route path = "/dashboard">
+        <Route path = "/dashboard/">
           <Route index element = {<CertificateGenerator />} />
+          <Route path='certificates' element = {<GetCertificates />} />
         </Route>
       </Routes>
     </>
