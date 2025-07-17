@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+body{
+  background-color: #F7FAFC;
+}
+section {
+  /* padding: 4rem 6rem; */
+}
+section > h1{
+  @apply text-5xl font-extrabold
+}
+/* -----------------------------HOME PAGE------------------------------------------- */
+nav a, header button{
+  background-color: #0A80ED;
+  color: white;
+}
+.home-cont{
+  background: url(./assets/images/HeroBg.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  z-index: 1;
+}
+.home-cont::before{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  background-color: rgba(0,0,0,0.5);
+  z-index: -1;
+}
+
+
+/* ------------------------------------------------FEATURES & BENEFITS SECTION----------------------------------------------- */
+.features, .benefits{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin: 2rem 0;
+}
+.feature, .benefit{
+  border: 1px solid #CFDBE8;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+.feature h3, .benefit h3{
+  @apply text-xl font-bold my-2
+}
+
+.feature #icon, .benefit #icon{
+  font-size: 2rem;
+}
+.feature p, .benefit p{
+  color: #4A739C;
+}
+
+/* -----------------------------------------------------------PRICES SECTION-------------------------------------------------------------- */
+.prices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin: 2rem 0;
+}
+.price{
+  border: 1px solid #CFDBE8;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
